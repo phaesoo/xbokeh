@@ -1,12 +1,12 @@
-from __future__ import print_function
-from collections import defaultdict
-from typing import List, Iterable
+from typing import Optional
 
 # bokeh
 from bokeh.plotting import figure
 
 from .base import BaseFigure
 from .constants import DEFAULT_COLORS
+
+_DEFAULT_GROUP = "default"
 
 
 class SimpleFigure(BaseFigure):
@@ -25,26 +25,34 @@ class SimpleFigure(BaseFigure):
 
         super().__init__(fig)
 
-        self._max_item_size = len(DEFAULT_COLORS)
-        self._counts = defaultdict(int)
+        self._glyph_counter = dict()
 
     def _init_data(self):
         return dict(x=[], y=[], x_desc=[])
 
-    def set_xaxis_label(self, label_mapper: dict):
-        assert isinstance(label_mapper, dict)
-        self._figure.xaxis.major_label_overrides = label_mapper
 
-    def add_line(self, y, x=None):
-        _x = x
-        if _x is None:
-            super().add_line("default", "1", color="black")
-        data = {
+
+    def add_line(self, y, x=None, color: Optional[str] = None):
+        if x is None:
+            x = range(len(y))
+
+        index = self._index("line")
+        if color is None:
+            color = DEFAULT_COLORS[index]
+
+        name = str(index)
+        super().add_line(_DEFAULT_GROUP, name, color=color)
+        super().set_source(_DEFAULT_GROUP, name, **{
             "x": x,
             "y": y,
-        }
-        super().set_source("default", "1", **data)
+        })
 
-    def _increase_count(self, item: str):
-        assert self._counts[item] < 0
-        self._counts[item] += 1
+    def _index(self, name: str) -> int:
+        if name not in self._glyph_counter:
+            self._glyph_counter[name] = 0
+        else:
+            self._glyph_counter[name] += 1
+
+        count = self._glyph_counter[name]
+        assert count < len(DEFAULT_COLORS)
+        return count
