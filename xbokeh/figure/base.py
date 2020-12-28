@@ -18,13 +18,13 @@ class BaseFigure(object):
     def __init__(self, figure: Figure):
         assert_type(figure, "figure", Figure)
         self._figure = figure
-        self._attr_dict = dict(
+        self._attr_dict: dict = {
             # group, name
-            source=defaultdict(dict),
-            label=defaultdict(dict),
-            span=defaultdict(dict),
-            line=defaultdict(dict),
-        )
+            "source": defaultdict(dict),
+            "label": defaultdict(dict),
+            "span": defaultdict(dict),
+            "line": defaultdict(dict),
+        }
 
     @property
     def figure(self):

@@ -17,7 +17,7 @@ class DateGapFigure(BaseFigure):
         )
         fig.xaxis.minor_tick_line_alpha = 0.0
         fig.yaxis.minor_tick_line_alpha = 0.3
-        #fig.xgrid[0].ticker.desired_num_ticks = tick_num
+        # fig.xgrid[0].ticker.desired_num_ticks = tick_num
 
         super(DateGapFigure, self).__init__(fig)
 

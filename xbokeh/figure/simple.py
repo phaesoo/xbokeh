@@ -21,7 +21,7 @@ class SimpleFigure(BaseFigure):
         )
         fig.xaxis.minor_tick_line_alpha = 0.0
         fig.yaxis.minor_tick_line_alpha = 0.3
-        #fig.xgrid[0].ticker.desired_num_ticks = tick_num
+        # fig.xgrid[0].ticker.desired_num_ticks = tick_num
 
         super().__init__(fig)
 
@@ -30,7 +30,7 @@ class SimpleFigure(BaseFigure):
     def _init_data(self):
         return dict(x=[], y=[], x_desc=[])
 
-    def add_line(self, y, x=None, color: Optional[str] = None):
+    def add_line(self, y, x=None, color: Optional[str] = None):  # type: ignore
         if x is None:
             x = range(len(y))
 
