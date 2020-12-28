@@ -1,3 +1,4 @@
+from bokeh.models.tickers import FixedTicker
 from xbokeh.figure.base import BaseFigure
 from bokeh.plotting import figure as bpf
 import pytest
@@ -13,27 +14,43 @@ class _Figure(BaseFigure):
 
 
 @pytest.fixture
-def figure():
+def fg():  # pylint: disable=invalid-name
     return _Figure()
 
 
-def test_set_axis_label(figure):
-    ret = figure.set_axis_label(xaxis_label="X", yaxis_label="Y")
+def test_set_axis_label(fg):
+    xaxis_label = "X"
+    yaxis_label = "Y"
+    ret = fg.set_axis_label(xaxis_label=xaxis_label, yaxis_label=yaxis_label)
 
     assert ret is None
-    assert figure.figure.xaxis.axis_label == "X"
-    assert figure.figure.yaxis.axis_label == "Y"
+    assert fg.figure.xaxis.axis_label == "X"
+    assert fg.figure.yaxis.axis_label == "Y"
 
 
-def test_set_axis_formatter(figure):
+def test_set_axis_formatter(fg):
     xaxis_formatter = NumeralTickFormatter(format="0.000")
     yaxis_formatter = NumeralTickFormatter(format="0.0")
-    ret = figure.set_axis_formatter(
-        xaxis_formatter=xaxis_formatter,
-        yaxis_formatter=yaxis_formatter,
+    ret = fg.set_axis_formatter(
+        xaxis_formatter,
+        yaxis_formatter,
     )
 
     assert ret is None
+    assert fg.figure.xaxis[0].formatter is xaxis_formatter
+    assert fg.figure.yaxis[0].formatter is yaxis_formatter
 
-    assert figure.figure.xaxis[0].formatter is xaxis_formatter
-    assert figure.figure.yaxis[0].formatter is yaxis_formatter
+
+def test_set_axis_tick_label(fg):
+    xaxis_tick_label = {0: "A", 1: "B"}
+    yaxis_tick_label = {0: "C", 1: "D"}
+    ret = fg.set_axis_tick_label(
+        xaxis_tick_label,
+        yaxis_tick_label,
+    )
+
+    assert ret is None
+    assert isinstance(fg.figure.xaxis.ticker, FixedTicker)
+    assert fg.figure.xaxis.major_label_overrides == xaxis_tick_label
+    assert isinstance(fg.figure.yaxis.ticker, FixedTicker)
+    assert fg.figure.yaxis.major_label_overrides == yaxis_tick_label
