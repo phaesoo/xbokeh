@@ -1,9 +1,11 @@
 import abc
 from collections import defaultdict
-from typing import Optional
+from datetime import datetime, date
+from typing import Optional, Union
 
 from bokeh.model import Model
 from bokeh.models import ColumnDataSource, Label, Span, TickFormatter
+from bokeh.plotting import Figure
 
 from .asserts import assert_type
 
@@ -13,8 +15,8 @@ class BaseFigure(object):
     Highly utilized wrapper class for Bokeh Figure
     """
 
-    def __init__(self, figure):
-        # figure
+    def __init__(self, figure: Figure):
+        assert_type(figure, "figure", Figure)
         self._figure = figure
         self._attr_dict = dict(
             # group, name
@@ -75,7 +77,12 @@ class BaseFigure(object):
             self._figure.yaxis.ticker = list(yaxis_tick_label.keys())
             self._figure.yaxis.major_label_overrides = yaxis_tick_label
 
-    def y_range(self, start, end, y_range_name=None):
+    def y_range(
+        self,
+        start: Union[int, float, datetime, date],
+        end: Union[int, float, datetime, date],
+        y_range_name=None,
+    ):
         if y_range_name is None:
             self._figure.y_range.start = start
             self._figure.y_range.end = end
@@ -236,7 +243,7 @@ class BaseFigure(object):
 
     @staticmethod
     def _set_label(
-        label,
+        label: Label,
         **kwargs,
     ):
         if "text" in kwargs:
@@ -258,15 +265,15 @@ class BaseFigure(object):
 
     def clear_source(
         self,
-        group,
-        name,
+        group: str,
+        name: str,
     ):
         source = self._get_attr("source", group, name)
         source.data = self._init_data()
 
     def _get_attr_dict(
         self,
-        attr_type,
+        attr_type: str,
     ):
         attr_dict = self._attr_dict.get(attr_type)
         if attr_dict is None:
@@ -275,8 +282,8 @@ class BaseFigure(object):
 
     def _get_attr_group(
         self,
-        attr_type,
-        group,
+        attr_type: str,
+        group: str,
     ):
         attr_dict = self._get_attr_dict(attr_type)
         attr_group = attr_dict.get(group)
@@ -286,9 +293,9 @@ class BaseFigure(object):
 
     def _get_attr(
         self,
-        attr_type,
-        group,
-        name,
+        attr_type: str,
+        group: str,
+        name: str,
     ):
         attr_dict = self._get_attr_dict(attr_type)
         attr = attr_dict[group].get(name)

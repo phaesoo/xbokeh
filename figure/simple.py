@@ -30,8 +30,6 @@ class SimpleFigure(BaseFigure):
     def _init_data(self):
         return dict(x=[], y=[], x_desc=[])
 
-
-
     def add_line(self, y, x=None, color: Optional[str] = None):
         if x is None:
             x = range(len(y))
