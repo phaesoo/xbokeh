@@ -1,16 +1,30 @@
-import abc
+from abc import (
+    ABC,
+    abstractmethod,
+)
 from collections import defaultdict
-from datetime import datetime, date
-from typing import Optional, Union
+from datetime import (
+    date,
+    datetime,
+)
+from typing import (
+    Optional,
+    Union,
+)
 
 from bokeh.model import Model
-from bokeh.models import ColumnDataSource, Label, Span, TickFormatter
+from bokeh.models import (
+    ColumnDataSource,
+    Label,
+    Span,
+    TickFormatter,
+)
 from bokeh.plotting import Figure
 
-from .asserts import assert_type
+from xbokeh.common.assertions import assert_type
 
 
-class BaseFigure(object):
+class BaseFigure(ABC):
     """
     Highly utilized wrapper class for Bokeh Figure
     """
@@ -30,8 +44,8 @@ class BaseFigure(object):
     def figure(self):
         return self._figure
 
-    @abc.abstractmethod
-    def _init_data(self):
+    @abstractmethod
+    def _init_data(self) -> dict:
         return dict(x=[], y=[])
 
     def set_axis_label(

@@ -1,7 +1,6 @@
-# bokeh
 from bokeh.plotting import figure
 
-from .base import BaseFigure
+from xbokeh.figure.base import BaseFigure
 
 
 class DateGapFigure(BaseFigure):
@@ -19,12 +18,12 @@ class DateGapFigure(BaseFigure):
         fig.yaxis.minor_tick_line_alpha = 0.3
         # fig.xgrid[0].ticker.desired_num_ticks = tick_num
 
-        super(DateGapFigure, self).__init__(fig)
+        super().__init__(fig)
 
         self._label_mapper = None
         self.refresh_date_list(date_list)
 
-    def _init_data(self):
+    def _init_data(self) -> dict:
         return dict(x=[], y=[], x_desc=[])
 
     def refresh_date_list(self, date_list):
@@ -44,4 +43,4 @@ class DateGapFigure(BaseFigure):
             raise ValueError("x is not defined")
 
         kwargs["x_desc"] = [self._label_mapper[i] for i in x_range]
-        super(DateGapFigure, self).set_source(group, name, **kwargs)
+        super().set_source(group, name, **kwargs)

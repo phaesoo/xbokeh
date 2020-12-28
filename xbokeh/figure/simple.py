@@ -1,10 +1,9 @@
 from typing import Optional
 
-# bokeh
 from bokeh.plotting import figure
 
-from .base import BaseFigure
-from .constants import DEFAULT_COLORS
+from xbokeh.common.constants import DEFAULT_COLORS
+from xbokeh.figure.base import BaseFigure
 
 _DEFAULT_GROUP = "default"
 

@@ -1,7 +1,6 @@
-# bokeh
 from bokeh.plotting import figure
 
-from .base import BaseFigure
+from xbokeh.figure.base import BaseFigure
 
 
 class PowerSpectrumFigure(BaseFigure):
@@ -19,10 +18,7 @@ class PowerSpectrumFigure(BaseFigure):
         fig.yaxis.minor_tick_line_alpha = 0.3
         fig.xgrid[0].ticker.desired_num_ticks = tick_num
 
-        super(PowerSpectrumFigure, self).__init__(fig)
+        super().__init__(fig)
 
-    def _init_data(self):
+    def _init_data(self) -> dict:
         return dict(x=[], y=[])
-
-    def set_source(self, group, name, **kwargs):
-        super(PowerSpectrumFigure, self).set_source(group, name, **kwargs)

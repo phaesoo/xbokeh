@@ -1,4 +1,7 @@
-from typing import Any, Type
+from typing import (
+    Any,
+    Type,
+)
 
 
 def assert_type(var: Any, varname: str, type_: Type, noneable=False) -> None:
