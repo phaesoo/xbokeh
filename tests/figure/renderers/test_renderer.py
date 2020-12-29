@@ -1,6 +1,8 @@
+from bokeh.models.glyphs import Line
 import pytest
 from bokeh.models.sources import ColumnDataSource
 from bokeh.plotting import figure
+
 
 from xbokeh.figure.renderers.renderer import Renderer
 
@@ -16,7 +18,7 @@ def renderer():
     source = ColumnDataSource(_DATA)
     f = figure()
     r = f.line(source=source)
-    return _Renderer(r, source)
+    return _Renderer(Line, r, source)
 
 
 def test_init_data(renderer):

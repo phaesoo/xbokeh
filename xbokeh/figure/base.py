@@ -22,6 +22,8 @@ from bokeh.models import (
 from bokeh.plotting import Figure
 
 from xbokeh.common.assertions import assert_type
+from xbokeh.figure.renderers import Line
+from xbokeh.figure.renderers.vbar import VBar
 
 
 class BaseFigure(ABC):
@@ -38,6 +40,9 @@ class BaseFigure(ABC):
             "span": defaultdict(dict),
             "line": defaultdict(dict),
         }
+
+        self._lines: dict = defaultdict(dict)
+        self._vbars: dict = defaultdict(dict)
 
     @property
     def figure(self):
@@ -109,7 +114,7 @@ class BaseFigure(ABC):
     def add_layout(self, obj, place):
         self._figure.add_layout(obj, place)
 
-    def add_line(
+    def add_line_old(
         self,
         group: str,
         name: str,
@@ -124,6 +129,29 @@ class BaseFigure(ABC):
         self._set_attr("source", group, name, source)
         self._set_attr("line", group, name, line)
         return line
+
+    def add_line(
+        self,
+        group: str,
+        name: str,
+        *,
+        color: str,
+        line_width: float = 1.2,
+        line_alpha: float = 1.0,
+    ):
+        source = ColumnDataSource(data=self._init_data())
+        line = self._figure.line(
+            "x",
+            "y",
+            source=source,
+            color=color,
+            line_width=line_width,
+            line_alpha=line_alpha,
+        )
+
+        if name in self._lines[group]:
+            raise ValueError(f"line already exists for group/name: {group}{name}")
+        self._lines[group][name] = Line(line, source)
 
     def add_label(
         self,
@@ -164,9 +192,18 @@ class BaseFigure(ABC):
         color: str,
     ):
         source = ColumnDataSource(data=self._init_data())
-        self._figure.vbar(x="x", top="y", width=0.98,
-                          source=source, fill_color=color, line_alpha=0.0)
-        self._set_attr("source", group, name, source)
+        vbar = self._figure.vbar(
+            x="x",
+            top="y",
+            width=0.98,
+            source=source,
+            fill_color=color,
+            line_alpha=0.0,
+        )
+
+        if name in self._vbars[group]:
+            raise ValueError(f"vbar already exists for group/name: {group}{name}")
+        self._vbars[group][name] = VBar(vbar, source)
 
     def set_source(
         self,
@@ -187,6 +224,26 @@ class BaseFigure(ABC):
                 raise ValueError(self._init_data().keys(), key)
             source_data[key] = val
         source.data = source_data
+
+    def get_line(
+        self,
+        group: str,
+        name: str,
+    ) -> Line:
+        try:
+            return self._lines[group][name]
+        except KeyError:
+            raise ValueError(f"group/name line does not exist: {group}/{name}")
+
+    def get_vbar(
+        self,
+        group: str,
+        name: str,
+    ) -> Line:
+        try:
+            return self._vbars[group][name]
+        except KeyError:
+            raise ValueError(f"group/name _vbars does not exist: {group}/{name}")
 
     def show_span(
         self,
@@ -333,3 +390,18 @@ class BaseFigure(ABC):
             raise ValueError("Attr already existed: %s/%s/%s" %
                              (attr_type, group, name))
         attr_dict[group][name] = obj
+
+    # def _set_renderer(
+    #     self,
+    #     group: str,
+    #     name: str,
+    #     renderer: GlyphRenderer,
+    # ):
+    #     assert_type(renderer, "renderer", GlyphRenderer)
+
+    #     attr_dict = self._get_attr_groups(attr_type)
+    #     attr = attr_dict[group].get(name)
+    #     if attr is not None:
+    #         raise ValueError("Attr already existed: %s/%s/%s" %
+    #                          (attr_type, group, name))
+    #     attr_dict[group][name] = obj
