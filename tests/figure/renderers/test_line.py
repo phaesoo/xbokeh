@@ -1,3 +1,4 @@
+from bokeh.models.sources import ColumnDataSource
 from bokeh.plotting import figure
 from xbokeh.figure.renderers import Line
 import pytest
@@ -5,15 +6,11 @@ import pytest
 
 @pytest.fixture
 def line():
+    source = ColumnDataSource(dict(x=[], y=[]))
     f = figure()
-    l = f.line(x=[1, 2, 3], y=[1, 2, 3])
-
-    return Line(l)
+    r = f.line(source=source)
+    return Line(r, source)
 
 
 def test_set_color(line):
     line.set_color("black")
-
-
-def test_clear(line):
-    line.clear()

@@ -1,6 +1,4 @@
-
-
-from typing import Optional
+from bokeh.models import ColumnDataSource
 from xbokeh.common.assertions import assert_type
 
 from bokeh.models.glyphs import Line as _Line
@@ -10,13 +8,8 @@ from xbokeh.figure.renderers.renderer import Renderer
 
 
 class Line(Renderer):
-    def __init__(self, renderer: GlyphRenderer, data: Optional[dict] = None) -> None:
-        """
-        :renderer: GlyphRenderer return by figure.line
-        :data: data for ColumnDataSource.
-            ex) data = {'x': [1,2,3,4], 'y': np.ndarray([10.0, 20.0, 30.0, 40.0])}
-        """
-        super().__init__(renderer, data)
+    def __init__(self, renderer: GlyphRenderer, source: ColumnDataSource) -> None:
+        super().__init__(renderer, source)
 
         assert_type(self._renderer.glyph, "_renderer.glyph", _Line)
         self._line = self._renderer.glyph
