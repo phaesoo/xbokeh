@@ -6,7 +6,7 @@ from typing import (
 )
 
 from bokeh.models.renderers import GlyphRenderer
-from bokeh.models.sources import ColumnarDataSource
+from bokeh.models.sources import ColumnDataSource
 
 from xbokeh.common.assertions import assert_type
 from xbokeh.figure.renderers.validate import validate_data
@@ -26,7 +26,7 @@ class Renderer(ABC):
         self._init_data: Dict[str, List] = {k: [] for k in data}
 
         self._renderer = renderer
-        self._source = ColumnarDataSource(data=data)
+        self._source = ColumnDataSource(data=data)
 
     def clear(self):
         self._source.data = self._init_data.copy()

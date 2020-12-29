@@ -13,7 +13,7 @@ class Line(Renderer):
     def __init__(self, renderer: GlyphRenderer, data: Optional[dict] = None) -> None:
         """
         :renderer: GlyphRenderer return by figure.line
-        :data: data for ColumnarDataSource.
+        :data: data for ColumnDataSource.
             ex) data = {'x': [1,2,3,4], 'y': np.ndarray([10.0, 20.0, 30.0, 40.0])}
         """
         super().__init__(renderer, data)
