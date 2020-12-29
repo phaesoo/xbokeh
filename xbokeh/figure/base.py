@@ -33,7 +33,6 @@ class BaseFigure(ABC):
         assert_type(figure, "figure", Figure)
         self._figure = figure
         self._attr_dict: dict = {
-            # group, name
             "source": defaultdict(dict),
             "label": defaultdict(dict),
             "span": defaultdict(dict),
@@ -221,27 +220,26 @@ class BaseFigure(ABC):
         name: str,
         **kwargs,
     ):
-        if "text_alpha" not in kwargs:
-            kwargs["text_alpha"] = 1.0
+        _kwargs = {
+            "text_alpha": 1.0
+        }
+        _kwargs.update(**kwargs)
 
         label = self._get_attr("label", group, name)
-        self._set_label(label, **kwargs)
-
-    def hide_label_group(
-        self,
-        group: str,
-    ):
-        names = self._get_group_member_names("label", group)
-        for name in names:
-            self.hide_label(group, name)
+        self._set_label(label, **_kwargs)
 
     def hide_label(
         self,
         group: str,
-        name: str,
+        name: Optional[str] = None,
     ):
-        label = self._get_attr("label", group, name)
-        self._set_label(label, text_alpha=0.0)
+        if name:
+            attr = self._get_attr("label", group, name)
+            self._set_label(attr, text_alpha=0.0)
+        else:
+            attrs = self._get_group_attrs("source", group)
+            for k in attrs:
+                self._set_label(attrs[k], text_alpha=0.0)
 
     def update_line(
         self,
@@ -269,53 +267,47 @@ class BaseFigure(ABC):
         if "text_alpha" in kwargs:
             label.text_alpha = kwargs["text_alpha"]
 
-    def clear_source_group(
-        self,
-        group: str,
-    ):
-        names = self._get_group_member_names("source", group)
-        for name in names:
-            self.clear_source(group, name)
-
     def clear_source(
         self,
         group: str,
-        name: str,
+        name: Optional[str] = None,
     ):
-        source = self._get_attr("source", group, name)
-        source.data = self._init_data()
+        if name:
+            attr = self._get_attr("source", group, name)
+            attr.data = self._init_data()
+        else:
+            attrs = self._get_group_attrs("source", group)
+            for k in attrs:
+                attrs[k].data = self._init_data()
 
-    def _get_attr_dict(
+    def _get_attr_groups(
         self,
         attr_type: str,
-    ):
-        attr_dict = self._attr_dict.get(attr_type)
-        if attr_dict is None:
-            raise ValueError("Invalid attribute: %s" % attr_type)
-        return attr_dict
+    ) -> dict:
+        attr_groups = self._attr_dict.get(attr_type)
+        if attr_groups is None:
+            raise ValueError("attr_type does not exist: {}".format(attr_type))
+        return attr_groups
 
-    def _get_attr_group(
+    def _get_group_attrs(
         self,
         attr_type: str,
         group: str,
-    ):
-        attr_dict = self._get_attr_dict(attr_type)
-        attr_group = attr_dict.get(group)
-        if attr_group is None:
-            raise ValueError("Not existed line name: %s" % group)
-        return attr_group
+    ) -> dict:
+        group_attrs = self._get_attr_groups(attr_type).get(group)
+        if group_attrs is None:
+            raise ValueError("group does not exist: {}".format(group))
+        return group_attrs
 
     def _get_attr(
         self,
         attr_type: str,
         group: str,
         name: str,
-    ):
-        attr_dict = self._get_attr_dict(attr_type)
-        attr = attr_dict[group].get(name)
+    ) -> Model:
+        attr = self._get_group_attrs(attr_type, group).get(name)
         if attr is None:
-            raise ValueError(
-                "Not existed attr group/name: %s/%s" % (group, name))
+            raise ValueError("attr does not exist: group({}), name({})".format(group, name))
         return attr
 
     def _get_group_member_names(
@@ -323,7 +315,7 @@ class BaseFigure(ABC):
         attr_type: str,
         group: str,
     ):
-        attr_dict = self._get_attr_dict(attr_type)
+        attr_dict = self._get_attr_groups(attr_type)
         return attr_dict[group].keys()
 
     def _set_attr(
@@ -335,7 +327,7 @@ class BaseFigure(ABC):
     ):
         assert_type(obj, "obj", Model)
 
-        attr_dict = self._get_attr_dict(attr_type)
+        attr_dict = self._get_attr_groups(attr_type)
         attr = attr_dict[group].get(name)
         if attr is not None:
             raise ValueError("Attr already existed: %s/%s/%s" %
