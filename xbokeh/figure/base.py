@@ -15,15 +15,19 @@ from typing import (
 from bokeh.model import Model
 from bokeh.models import (
     ColumnDataSource,
-    Label,
-    Span,
     TickFormatter,
 )
+from bokeh.models import Label as Label_
+from bokeh.models import Span as Span_
 from bokeh.plotting import Figure
 
 from xbokeh.common.assertions import assert_type
 from xbokeh.figure.renderers import Line
 from xbokeh.figure.renderers.vbar import VBar
+from xbokeh.figure.annotations import (
+    Span,
+    Label,
+)
 
 
 class BaseFigure(ABC):
@@ -43,6 +47,8 @@ class BaseFigure(ABC):
 
         self._lines: dict = defaultdict(dict)
         self._vbars: dict = defaultdict(dict)
+        self._spans: dict = defaultdict(dict)
+        self._labels: dict = defaultdict(dict)
 
     @property
     def figure(self):
@@ -160,14 +166,16 @@ class BaseFigure(ABC):
         y_range_name: str = None,
     ):
         if y_range_name:
-            label = Label(x=0, y=0, x_offset=5, y_offset=-7, render_mode="css", text_font_size="10px",
-                          text_alpha=1.0, background_fill_color="white", y_range_name=y_range_name)
+            label = Label_(x=0, y=0, x_offset=5, y_offset=-7, render_mode="css", text_font_size="10px",
+                           text_alpha=1.0, background_fill_color="white", y_range_name=y_range_name)
         else:
-            label = Label(x=0, y=0, x_offset=5, y_offset=-7, render_mode="css",
-                          text_font_size="10px", text_alpha=1.0, background_fill_color="white")
-
+            label = Label_(x=0, y=0, x_offset=5, y_offset=-7, render_mode="css",
+                           text_font_size="10px", text_alpha=1.0, background_fill_color="white")
         self._figure.add_layout(label)
-        self._set_attr("label", group, name, label)
+
+        if name in self._labels[group]:
+            raise ValueError(f"span already exists for group/name: {group}{name}")
+        self._labels[group][name] = Label(label)
 
     def add_span(
         self,
@@ -180,10 +188,19 @@ class BaseFigure(ABC):
         alpha: float = 1.0,
         line_dash: str = "solid",
     ):
-        span = Span(location=location, dimension=dimension, line_color=color,
-                    line_width=width, line_alpha=alpha, line_dash=line_dash)
-        self._set_attr("span", group, name, span)
+        span = Span_(
+            location=location,
+            dimension=dimension,
+            line_color=color,
+            line_width=width,
+            line_alpha=alpha,
+            line_dash=line_dash,
+        )
         self._figure.renderers.extend([span])
+
+        if name in self._spans[group]:
+            raise ValueError(f"span already exists for group/name: {group}{name}")
+        self._spans[group][name] = Span(span)
 
     def add_vbar(
         self,
@@ -312,7 +329,7 @@ class BaseFigure(ABC):
 
     @staticmethod
     def _set_label(
-        label: Label,
+        label: Label_,
         **kwargs,
     ):
         if "text" in kwargs:
