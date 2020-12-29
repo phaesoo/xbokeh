@@ -13,21 +13,19 @@ from typing import (
 )
 
 from bokeh.model import Model
-from bokeh.models import (
-    ColumnDataSource,
-    TickFormatter,
-)
+from bokeh.models import ColumnDataSource
 from bokeh.models import Label as Label_
 from bokeh.models import Span as Span_
+from bokeh.models import TickFormatter
 from bokeh.plotting import Figure
 
 from xbokeh.common.assertions import assert_type
+from xbokeh.figure.annotations import (
+    Label,
+    Span,
+)
 from xbokeh.figure.renderers import Line
 from xbokeh.figure.renderers.vbar import VBar
-from xbokeh.figure.annotations import (
-    Span,
-    Label,
-)
 
 
 class BaseFigure(ABC):
@@ -119,22 +117,6 @@ class BaseFigure(ABC):
 
     def add_layout(self, obj, place):
         self._figure.add_layout(obj, place)
-
-    def add_line_old(
-        self,
-        group: str,
-        name: str,
-        color: str,
-        line_width: float = 1.2,
-        line_alpha: float = 1.0,
-    ):
-        source = ColumnDataSource(data=self._init_data())
-        line = self._figure.line(
-            "x", "y", source=source, color=color, line_width=line_width, line_alpha=line_alpha)
-
-        self._set_attr("source", group, name, source)
-        self._set_attr("line", group, name, line)
-        return line
 
     def add_line(
         self,
@@ -261,6 +243,16 @@ class BaseFigure(ABC):
             return self._vbars[group][name]
         except KeyError:
             raise ValueError(f"group/name _vbars does not exist: {group}/{name}")
+
+    def get_span(
+        self,
+        group: str,
+        name: str,
+    ) -> Span:
+        try:
+            return self._spans[group][name]
+        except KeyError:
+            raise ValueError(f"group/name _spans does not exist: {group}/{name}")
 
     def show_span(
         self,
@@ -391,22 +383,6 @@ class BaseFigure(ABC):
     ):
         attr_dict = self._get_attr_groups(attr_type)
         return attr_dict[group].keys()
-
-    def _set_attr(
-        self,
-        attr_type: str,
-        group: str,
-        name: str,
-        obj: Model,
-    ):
-        assert_type(obj, "obj", Model)
-
-        attr_dict = self._get_attr_groups(attr_type)
-        attr = attr_dict[group].get(name)
-        if attr is not None:
-            raise ValueError("Attr already existed: %s/%s/%s" %
-                             (attr_type, group, name))
-        attr_dict[group][name] = obj
 
     # def _set_renderer(
     #     self,
