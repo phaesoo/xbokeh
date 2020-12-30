@@ -9,4 +9,4 @@ def vbar():
     source = ColumnDataSource(dict(x=[], y=[]))
     f = figure()
     r = f.vbar(source=source)
-    return VBar(r, source)
+    return VBar(r)

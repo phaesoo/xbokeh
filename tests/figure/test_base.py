@@ -73,6 +73,15 @@ def test_add_line(fg):
     assert isinstance(fg._lines[group][name], Line)
 
 
+def test_add_line_raises_if_name_duplicated(fg):
+    group = "group-0"
+    name = "line-0"
+    fg.add_line(group, name, {"x": [0, 1, 2], "y": [3, 4, 5]}, color="black")
+
+    with pytest.raises(ValueError):
+        fg.add_line(group, name, {"x": [0, 1, 2], "y": [3, 4, 5]}, color="black")
+
+
 def test_get_line(fg2):
     line = fg2.get_line("group-0", "line-0")
 

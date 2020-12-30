@@ -131,22 +131,47 @@ class BaseFigure(ABC):
     ):
         assert_type(data, "data", dict)
 
-        source = ColumnDataSource(data={"x": [], "y": []})
-        line = self._figure.line(
-            "x",
-            "y",
-            source=source,
-            color=color,
-            line_width=line_width,
-            line_alpha=line_alpha,
-        )
-
         if name in self._lines[group]:
             raise ValueError(f"line already exists for group/name: {group}{name}")
 
-        line = Line(line, source)
+        line = Line(
+            self._figure.line(
+                "x",
+                "y",
+                source=ColumnDataSource(data={"x": [], "y": []}),
+                color=color,
+                line_width=line_width,
+                line_alpha=line_alpha,
+            ),
+        )
         line.set_data(data)
         self._lines[group][name] = line
+
+    def add_vbar(
+        self,
+        group: str,
+        name: str,
+        data: Dict[str, Union[List, np.ndarray]],
+        *,
+        color: str,
+    ):
+        assert_type(data, "data", dict)
+
+        if name in self._vbars[group]:
+            raise ValueError(f"vbar already exists for group/name: {group}{name}")
+
+        vbar = VBar(
+            self._figure.vbar(
+                x="x",
+                top="y",
+                width=0.98,
+                source=ColumnDataSource(data={"x": [], "y": []}),
+                fill_color=color,
+                line_alpha=0.0,
+            ),
+        )
+        vbar.set_data(data)
+        self._vbars[group][name] = vbar
 
     def add_label(
         self,
@@ -190,26 +215,6 @@ class BaseFigure(ABC):
         if name in self._spans[group]:
             raise ValueError(f"span already exists for group/name: {group}{name}")
         self._spans[group][name] = Span(span)
-
-    def add_vbar(
-        self,
-        group: str,
-        name: str,
-        color: str,
-    ):
-        source = ColumnDataSource(data={"x": [], "y": []})
-        vbar = self._figure.vbar(
-            x="x",
-            top="y",
-            width=0.98,
-            source=source,
-            fill_color=color,
-            line_alpha=0.0,
-        )
-
-        if name in self._vbars[group]:
-            raise ValueError(f"vbar already exists for group/name: {group}{name}")
-        self._vbars[group][name] = VBar(vbar, source)
 
     def get_line(
         self,
