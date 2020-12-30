@@ -54,7 +54,13 @@ class BaseFigure(ABC):
 
     @abstractmethod
     def _init_data(self) -> dict:
-        return dict(x=[], y=[])
+        return dict(x=[], y=[], x_desc=[], y_desc=[])
+
+    def set_property(self, **kwargs):
+        """
+        Update bokeh Figure object's properties
+        """
+        self._figure.update(**kwargs)
 
     def set_axis_label(
         self,
@@ -115,7 +121,7 @@ class BaseFigure(ABC):
     def extra_y_ranges(self, y_range_dict):
         self._figure.extra_y_ranges = y_range_dict
 
-    def add_layout(self, obj, place):
+    def add_layout(self, obj, place: str):
         self._figure.add_layout(obj, place)
 
     def add_line(
@@ -204,26 +210,6 @@ class BaseFigure(ABC):
             raise ValueError(f"vbar already exists for group/name: {group}{name}")
         self._vbars[group][name] = VBar(vbar, source)
 
-    def set_source(
-        self,
-        group: str,
-        name: str,
-        **kwargs,
-    ):
-        """
-        :param group:
-        :param name:
-        :param kwargs: input for source.data
-        """
-        source = self._get_attr("source", group, name)
-        source_data = dict()
-
-        for key, val in kwargs.items():
-            if key not in source.data.keys():
-                raise ValueError(self._init_data().keys(), key)
-            source_data[key] = val
-        source.data = source_data
-
     def get_line(
         self,
         group: str,
@@ -253,6 +239,16 @@ class BaseFigure(ABC):
             return self._spans[group][name]
         except KeyError:
             raise ValueError(f"group/name _spans does not exist: {group}/{name}")
+
+    def get_label(
+        self,
+        group: str,
+        name: str,
+    ) -> Span:
+        try:
+            return self._labels[group][name]
+        except KeyError:
+            raise ValueError(f"group/name _labels does not exist: {group}/{name}")
 
     def show_span(
         self,

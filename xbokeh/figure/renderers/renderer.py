@@ -4,6 +4,8 @@ from typing import (
     List,
     Type,
 )
+
+from bokeh.models.glyph import Glyph
 from xbokeh.figure.renderers.validate import validate_data
 
 from bokeh.models.renderers import GlyphRenderer
@@ -27,13 +29,19 @@ class Renderer(ABC):
         self._init_data: Dict[str, List] = {k: [] for k in source.data}
 
         self._renderer = renderer
-        self._glyph = renderer.glyph
+        self._glyph: Glyph = renderer.glyph
         self._source = source
 
     def set_data(self, data: dict):
         assert_type(data, "data", dict)
         validate_data(data)
         self._source.data = data
+
+    def update(self, **kwargs):
+        """
+        Updates the model's property
+        """
+        self._glyph.update(**kwargs)
 
     def clear(self):
         self._source.data = self._init_data.copy()

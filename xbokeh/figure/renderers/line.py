@@ -11,4 +11,4 @@ class Line(Renderer):
         super().__init__(Line_, renderer, source)
 
     def set_color(self, color: str):
-        self._glyph.line_color = color
+        self.update(line_color=color)
