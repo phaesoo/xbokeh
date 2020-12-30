@@ -11,7 +11,7 @@ class Annotation(ABC):
 
         self._annotation = annotation
 
-    def update(self, **kwargs):
+    def set_property(self, **kwargs):
         """
         Updates the model's property
         """

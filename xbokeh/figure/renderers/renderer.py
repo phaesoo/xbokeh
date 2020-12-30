@@ -37,7 +37,7 @@ class Renderer(ABC):
         validate_data(data)
         self._source.data = data
 
-    def update(self, **kwargs):
+    def set_property(self, **kwargs):
         """
         Updates the model's property
         """

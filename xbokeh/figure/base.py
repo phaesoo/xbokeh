@@ -13,8 +13,8 @@ from typing import (
 )
 
 from bokeh.models import ColumnDataSource
-from bokeh.models import Label as Label_
-from bokeh.models import Span as Span_
+from bokeh.models import Label as _Label
+from bokeh.models import Span as _Span
 from bokeh.models import TickFormatter
 from bokeh.plotting import Figure
 
@@ -153,10 +153,10 @@ class BaseFigure(ABC):
         y_range_name: str = None,
     ):
         if y_range_name:
-            label = Label_(x=0, y=0, x_offset=5, y_offset=-7, render_mode="css", text_font_size="10px",
+            label = _Label(x=0, y=0, x_offset=5, y_offset=-7, render_mode="css", text_font_size="10px",
                            text_alpha=1.0, background_fill_color="white", y_range_name=y_range_name)
         else:
-            label = Label_(x=0, y=0, x_offset=5, y_offset=-7, render_mode="css",
+            label = _Label(x=0, y=0, x_offset=5, y_offset=-7, render_mode="css",
                            text_font_size="10px", text_alpha=1.0, background_fill_color="white")
         self._figure.add_layout(label)
 
@@ -175,7 +175,7 @@ class BaseFigure(ABC):
         alpha: float = 1.0,
         line_dash: str = "solid",
     ):
-        span = Span_(
+        span = _Span(
             location=location,
             dimension=dimension,
             line_color=color,
