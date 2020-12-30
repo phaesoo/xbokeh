@@ -8,7 +8,7 @@ from xbokeh.figure.renderers.renderer import Renderer
 
 class Line(Renderer):
     def __init__(self, renderer: GlyphRenderer, source: ColumnDataSource) -> None:
-        super().__init__(_Line, renderer, source)
+        super().__init__(_Line, renderer)
 
     def set_color(self, color: str):
         self.set_property(line_color=color)

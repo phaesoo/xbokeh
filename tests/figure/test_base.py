@@ -10,9 +10,6 @@ class _Figure(BaseFigure):
     def __init__(self):
         super().__init__(bpf())
 
-    def _init_data(self) -> dict:
-        return dict(x=[], y=[])
-
 
 @pytest.fixture
 def fg():  # pylint: disable=invalid-name
@@ -24,7 +21,7 @@ def fg2():  # pylint: disable=invalid-name
     f = _Figure()
     group = "group-0"
     name = "line-0"
-    f.add_line(group, name, color="black")
+    f.add_line(group, name, {"x": [0, 1, 2], "y": [3, 4, 5]}, color="black")
     return f
 
 
@@ -69,7 +66,7 @@ def test_set_axis_tick_label(fg):
 def test_add_line(fg):
     group = "group-0"
     name = "line-0"
-    ret = fg.add_line(group, name, color="black")
+    ret = fg.add_line(group, name, {"x": [0, 1, 2], "y": [3, 4, 5]}, color="black")
 
     assert ret is None
     assert len(fg._lines[group]) == 1

@@ -1,17 +1,17 @@
-from abc import (
-    ABC,
-    abstractmethod,
-)
+from abc import ABC
 from collections import defaultdict
 from datetime import (
     date,
     datetime,
 )
 from typing import (
+    Dict,
+    List,
     Optional,
     Union,
 )
 
+import numpy as np
 from bokeh.models import ColumnDataSource
 from bokeh.models import Label as _Label
 from bokeh.models import Span as _Span
@@ -23,8 +23,10 @@ from xbokeh.figure.annotations import (
     Label,
     Span,
 )
-from xbokeh.figure.renderers import Line
-from xbokeh.figure.renderers.vbar import VBar
+from xbokeh.figure.renderers import (
+    Line,
+    VBar,
+)
 
 
 class BaseFigure(ABC):
@@ -32,15 +34,13 @@ class BaseFigure(ABC):
     Highly utilized wrapper class for Bokeh Figure
     """
 
-    def __init__(self, figure: Figure):
+    def __init__(
+        self,
+        figure: Figure,
+    ):
         assert_type(figure, "figure", Figure)
+
         self._figure = figure
-        self._attr_dict: dict = {
-            "source": defaultdict(dict),
-            "label": defaultdict(dict),
-            "span": defaultdict(dict),
-            "line": defaultdict(dict),
-        }
 
         self._lines: dict = defaultdict(dict)
         self._vbars: dict = defaultdict(dict)
@@ -50,10 +50,6 @@ class BaseFigure(ABC):
     @property
     def figure(self):
         return self._figure
-
-    @abstractmethod
-    def _init_data(self) -> dict:
-        return dict(x=[], y=[], x_desc=[], y_desc=[])
 
     def set_property(self, **kwargs):
         """
@@ -127,12 +123,15 @@ class BaseFigure(ABC):
         self,
         group: str,
         name: str,
+        data: Dict[str, Union[List, np.ndarray]],
         *,
         color: str,
         line_width: float = 1.2,
         line_alpha: float = 1.0,
     ):
-        source = ColumnDataSource(data=self._init_data())
+        assert_type(data, "data", dict)
+
+        source = ColumnDataSource(data={"x": [], "y": []})
         line = self._figure.line(
             "x",
             "y",
@@ -144,7 +143,10 @@ class BaseFigure(ABC):
 
         if name in self._lines[group]:
             raise ValueError(f"line already exists for group/name: {group}{name}")
-        self._lines[group][name] = Line(line, source)
+
+        line = Line(line, source)
+        line.set_data(data)
+        self._lines[group][name] = line
 
     def add_label(
         self,
@@ -195,7 +197,7 @@ class BaseFigure(ABC):
         name: str,
         color: str,
     ):
-        source = ColumnDataSource(data=self._init_data())
+        source = ColumnDataSource(data={"x": [], "y": []})
         vbar = self._figure.vbar(
             x="x",
             top="y",

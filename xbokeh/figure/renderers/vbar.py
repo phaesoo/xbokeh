@@ -8,4 +8,4 @@ from xbokeh.figure.renderers.renderer import Renderer
 
 class VBar(Renderer):
     def __init__(self, renderer: GlyphRenderer, source: ColumnDataSource) -> None:
-        super().__init__(VBar_, renderer, source)
+        super().__init__(VBar_, renderer)

@@ -1,21 +1,14 @@
 from abc import ABC
-from typing import (
-    Dict,
-    List,
-    Type,
-)
+from typing import Type
 
 from bokeh.models.glyph import Glyph
-from xbokeh.figure.renderers.validate import validate_data
-
 from bokeh.models.renderers import GlyphRenderer
-from bokeh.models.sources import ColumnDataSource
 
 from xbokeh.common.assertions import assert_type
 
 
 class Renderer(ABC):
-    def __init__(self, type_: Type, renderer: GlyphRenderer, source: ColumnDataSource) -> None:
+    def __init__(self, type_: Type, renderer: GlyphRenderer) -> None:
         """
         :renderer: instance of GlyphRenderer
         :data: data for ColumnDataSource.
@@ -23,19 +16,15 @@ class Renderer(ABC):
         """
         super().__init__()
         assert_type(renderer, "renderer", GlyphRenderer)
-        assert_type(renderer.glyph, "_renderer.glyph", type_)
-
-        # init_data will be used to initialize source.data
-        self._init_data: Dict[str, List] = {k: [] for k in source.data}
+        assert_type(renderer.glyph, "renderer.glyph", type_)
+        assert_type(renderer.data_source.data, "self._renderer.data_source.data", dict)
 
         self._renderer = renderer
         self._glyph: Glyph = renderer.glyph
-        self._source = source
 
     def set_data(self, data: dict):
         assert_type(data, "data", dict)
-        validate_data(data)
-        self._source.data = data
+        self._renderer.data_source.data = data
 
     def set_property(self, **kwargs):
         """
@@ -44,4 +33,4 @@ class Renderer(ABC):
         self._glyph.update(**kwargs)
 
     def clear(self):
-        self._source.data = self._init_data.copy()
+        self._renderer.data_source.data = {"x": [], "y": []}

@@ -37,10 +37,10 @@ class DateGapFigure(BaseFigure):
 
         self._label_mapper = label_mapper
 
-    def set_source(self, group, name, **kwargs):
-        x_range = kwargs.get("x")
-        if x_range is None:
-            raise ValueError("x is not defined")
+    # def set_source(self, group, name, **kwargs):
+    #     x_range = kwargs.get("x")
+    #     if x_range is None:
+    #         raise ValueError("x is not defined")
 
-        kwargs["x_desc"] = [self._label_mapper[i] for i in x_range]
-        super().set_source(group, name, **kwargs)
+    #     kwargs["x_desc"] = [self._label_mapper[i] for i in x_range]
+    #     super().set_source(group, name, **kwargs)
