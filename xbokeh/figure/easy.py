@@ -34,8 +34,8 @@ class EasyFigure(BaseFigure):
     def easy_line(
         self,
         y: Union[List, np.ndarray],
-        x: Optional[Union[List, np.ndarray]] = None,
         *,
+        x: Optional[Union[List, np.ndarray]] = None,
         color: Optional[str] = None,
     ):
         if x is None:
@@ -47,6 +47,28 @@ class EasyFigure(BaseFigure):
             color = DEFAULT_COLORSET[index]
 
         super().add_line(
+            self.GROUP_NAME,
+            str(index),
+            {"x": x, "y": y},
+            color=color,
+        )
+
+    def easy_vbar(
+        self,
+        y: Union[List, np.ndarray],
+        *,
+        x: Optional[Union[List, np.ndarray]] = None,
+        color: Optional[str] = None,
+    ):
+        if x is None:
+            x = list(range(len(y)))
+
+        index = len(self._vbars)
+
+        if color is None:
+            color = DEFAULT_COLORSET[index]
+
+        super().add_vbar(
             self.GROUP_NAME,
             str(index),
             {"x": x, "y": y},

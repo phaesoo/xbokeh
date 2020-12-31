@@ -29,7 +29,7 @@ def test_easy_line_with_param_y(ef):
 def test_easy_line_with_param_y_x(ef):
     y = [6, 7, 8]
     x = [3, 4, 5]
-    ef.easy_line(y, x)
+    ef.easy_line(y, x=x)
     line = ef._lines[ef.GROUP_NAME]["0"]
 
     assert len(ef._lines[ef.GROUP_NAME]) == 1
@@ -41,7 +41,19 @@ def test_easy_line_with_param_y_x_color(ef):
     y = [6, 7, 8]
     x = [3, 4, 5]
     color = "black"
-    ef.easy_line(y, x, color=color)
+    ef.easy_line(y, x=x, color=color)
     line = ef._lines[ef.GROUP_NAME]["0"]
 
     assert line._glyph.line_color == color
+
+
+def test_easy_vbar_with_param_y_x_color(ef):
+    y = [6, 7, 8]
+    x = [3, 4, 5]
+    color = "black"
+    ef.easy_vbar(y, x=x, color=color)
+    line = ef._vbars[ef.GROUP_NAME]["0"]
+
+    assert len(ef._vbars[ef.GROUP_NAME]) == 1
+    assert line.data == {"x": x, "y": y}
+    assert line._glyph.fill_color == color
