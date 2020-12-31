@@ -10,6 +10,7 @@ from typing import (
     Optional,
     Union,
 )
+from xbokeh.common.constants import DEFAULT_COLOR
 
 import numpy as np
 from bokeh.models import ColumnDataSource
@@ -125,7 +126,7 @@ class BaseFigure(ABC):
         name: str,
         data: Dict[str, Union[List, np.ndarray]],
         *,
-        color: str,
+        color: str = DEFAULT_COLOR,
         line_width: float = 1.2,
         line_alpha: float = 1.0,
     ):
@@ -153,7 +154,7 @@ class BaseFigure(ABC):
         name: str,
         data: Dict[str, Union[List, np.ndarray]],
         *,
-        color: str,
+        color: str = DEFAULT_COLOR,
     ):
         assert_type(data, "data", dict)
 

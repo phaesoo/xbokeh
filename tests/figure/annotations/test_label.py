@@ -13,7 +13,7 @@ def span():
     return Span(_Span(line_alpha=_LINE_ALPHA))
 
 
-def test_member_variables(span):
+def test_attributes(span):
     assert span._prev_line_alpha == _LINE_ALPHA
 
 

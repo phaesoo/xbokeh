@@ -21,7 +21,7 @@ def renderer():
     return _Renderer(Line, r)
 
 
-def test_member_variables(renderer):
+def test_attributes(renderer):
     assert isinstance(renderer._renderer, GlyphRenderer)
     assert isinstance(renderer._glyph, Line)
     assert renderer._renderer.data_source.data == _DATA

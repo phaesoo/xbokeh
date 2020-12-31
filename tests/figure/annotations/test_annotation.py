@@ -14,5 +14,5 @@ def annotation():
     return _Annotation(Annotation_, Annotation_())
 
 
-def test_member_variables(annotation):
+def test_attributes(annotation):
     assert isinstance(annotation._annotation, Annotation_)

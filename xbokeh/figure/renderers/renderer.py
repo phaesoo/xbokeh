@@ -22,6 +22,10 @@ class Renderer(ABC):
         self._renderer = renderer
         self._glyph: Glyph = renderer.glyph
 
+    @property
+    def data(self) -> dict:
+        return self._renderer.data_source.data
+
     def set_data(self, data: dict):
         assert_type(data, "data", dict)
         self._renderer.data_source.data = data
@@ -33,4 +37,4 @@ class Renderer(ABC):
         self._glyph.update(**kwargs)
 
     def clear(self):
-        self._renderer.data_source.data = {"x": [], "y": []}
+        self.set_data({"x": [], "y": []})
