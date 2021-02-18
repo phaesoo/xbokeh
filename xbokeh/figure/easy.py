@@ -5,6 +5,13 @@ from typing import (
 )
 
 import numpy as np
+from bokeh.models.tools import (
+    BoxZoomTool,
+    PanTool,
+    ResetTool,
+    SaveTool,
+    WheelZoomTool,
+)
 from bokeh.plotting import figure
 
 from xbokeh.common.constants import DEFAULT_COLORSET
@@ -24,6 +31,13 @@ class EasyFigure(BaseFigure):
         fig = figure(
             plot_width=kwargs.get("plot_width", 500),
             plot_height=kwargs.get("plot_height", 500),
+            tools=[
+                ResetTool(),
+                PanTool(),
+                BoxZoomTool(),
+                WheelZoomTool(),
+                SaveTool(),
+            ],
             **kwargs,
         )
         fig.xaxis.minor_tick_line_alpha = 0.0
